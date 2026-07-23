@@ -5,8 +5,15 @@
 #include "Lightbar.h"
 
 // ---- Configuration -- edit these ------------------------------------------
-#define WIFI_SSID "ssid"
-#define WIFI_PASS "pass"
+// WiFi credentials are supplied at build time via environment variables
+// (WIFI_SSID / WIFI_PASS) -- see README. These are empty fallbacks so the
+// firmware still compiles if the build flags are absent.
+#ifndef WIFI_SSID
+#define WIFI_SSID ""
+#endif
+#ifndef WIFI_PASS
+#define WIFI_PASS ""
+#endif
 
 // 3-byte id of your Xiaomi remote. Capture it with
 // scripts/scan_lightbar_remote.py, or use an arbitrary id and re-pair the bar

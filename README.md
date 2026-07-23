@@ -53,23 +53,37 @@ of them per board in `platformio.ini` `build_flags`.
 
 ## Configure
 
-Edit the defines at the top of `src/main.cpp`:
-
-- `WIFI_SSID` / `WIFI_PASS` — your network credentials.
-- `REMOTE_ID` — the 3-byte id of your remote (e.g. `0xABCDEF`). Capture yours with
+- `WIFI_SSID` / `WIFI_PASS` — your network credentials. These are **not** stored
+  in source; they are passed in at build time via environment variables (see
+  [Build, flash, monitor](#build-flash-monitor) below), so you never risk
+  committing them to git.
+- `REMOTE_ID` — edit the define at the top of `src/main.cpp`. The 3-byte id of
+  your remote (e.g. `0xABCDEF`). Capture yours with
   [`scripts/scan_lightbar_remote.py`](https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/scripts/scan_lightbar_remote.py), or set an arbitrary id and
   re-pair the bar: unplug/replug the bar and trigger `/on_off` within 20 s (the bar will flash).
 
 ## Build, flash, monitor
 
+Set your WiFi credentials as environment variables first — they are injected as
+build flags, so they stay out of the source and git history:
+
 ```sh
-cd esp32c3
+export WIFI_SSID="my-network"
+export WIFI_PASS="my-password"
+
 pio run                 # compile (default env: esp32-c3-devkitm-1)
 pio run -t upload       # flash over USB
 pio device monitor      # serial console @ 115200
 ```
 
-For the WEMOS LOLIN32 Lite, select its environment:
+Or set them inline for a single command:
+
+```sh
+WIFI_SSID="my-network" WIFI_PASS="my-password" pio run -e lolin32-lite -t upload
+```
+
+For the WEMOS LOLIN32 Lite, select its environment (credentials are set the same
+way):
 
 ```sh
 pio run -e lolin32-lite               # compile
