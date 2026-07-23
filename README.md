@@ -4,8 +4,11 @@ A standalone [PlatformIO](https://platformio.org/) / Arduino firmware for an **E
 toggles a Xiaomi Mi Computer Monitor Light Bar (model **MJGJD01YL**, the non-BLE variant with a
 Telink TLSR8368 receiver) over an **nRF24L01(+)** module — no Raspberry Pi required.
 
-It is a C++ port of the Python library in this repo (`xiaomi_lightbar/radio.py` +
-`xiaomi_lightbar/baseband.py`). The bar has a single toggle command, so calling `on_off()` turns it
+It is a C++ port of the Python library
+[**lamperez/xiaomi-lightbar-nrf24**](https://github.com/lamperez/xiaomi-lightbar-nrf24)
+([`xiaomi_lightbar/radio.py`](https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/xiaomi_lightbar/radio.py) +
+[`xiaomi_lightbar/baseband.py`](https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/xiaomi_lightbar/baseband.py)).
+The bar has a single toggle command, so calling `on_off()` turns it
 on or off depending on its current state, exactly like pressing the remote knob.
 
 The firmware exposes a tiny WiFi HTTP endpoint: `GET /on_off` toggles the bar.
@@ -54,7 +57,7 @@ Edit the defines at the top of `src/main.cpp`:
 
 - `WIFI_SSID` / `WIFI_PASS` — your network credentials.
 - `REMOTE_ID` — the 3-byte id of your remote (e.g. `0xABCDEF`). Capture yours with
-  [`scripts/scan_lightbar_remote.py`](../scripts/scan_lightbar_remote.py), or set an arbitrary id and
+  [`scripts/scan_lightbar_remote.py`](https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/scripts/scan_lightbar_remote.py), or set an arbitrary id and
   re-pair the bar: unplug/replug the bar and trigger `/on_off` within 20 s (the bar will flash).
 
 ## Build, flash, monitor
@@ -93,7 +96,7 @@ With `PACKET_SELFTEST 1` (the default) and `REMOTE_ID 0xABCDEF`, the serial cons
 Self-test packet: 533914DD1C493412ABCDEFFF720100FAD4
 ```
 
-This is the gold test vector from `tests/test_baseband.py` (`id=0xABCDEF, command=0x0100,
+This is the gold test vector from [`tests/test_baseband.py`](https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/tests/test_baseband.py) (`id=0xABCDEF, command=0x0100,
 counter=0x72`) and proves the packet byte-order and CRC16 are correct.
 
 ## Troubleshooting
@@ -112,3 +115,10 @@ If the bar does not react even though the radio and WiFi are up:
   ```
 
 - Move the nRF24 close to the bar and confirm 3.3 V power with a decoupling capacitor.
+
+## Credits
+
+This firmware is a C++/ESP32 port of the reverse-engineering and Python implementation by
+Fernando Lamperez in [**lamperez/xiaomi-lightbar-nrf24**](https://github.com/lamperez/xiaomi-lightbar-nrf24).
+All credit for the nRF24/Telink protocol analysis (packet format, CRC-16, remote-id scanning,
+and the gold test vector) goes to that project.
