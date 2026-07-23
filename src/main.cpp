@@ -5,17 +5,22 @@
 #include "Lightbar.h"
 
 // ---- Configuration -- edit these ------------------------------------------
-#define WIFI_SSID "your-wifi-ssid"
-#define WIFI_PASS "your-wifi-password"
+#define WIFI_SSID "ssid"
+#define WIFI_PASS "pass"
 
 // 3-byte id of your Xiaomi remote. Capture it with
 // scripts/scan_lightbar_remote.py, or use an arbitrary id and re-pair the bar
 // (unplug/replug the bar, then trigger within 20 s).
-#define REMOTE_ID 0xABCDEF
+#define REMOTE_ID 0x45b510
 
 // nRF24L01 control pins (SPI pins SCK=4, MISO=5, MOSI=6 are set in Lightbar.cpp).
+// Overridable via build_flags so each board env can supply its own wiring.
+#ifndef NRF_CE_PIN
 #define NRF_CE_PIN 10
+#endif
+#ifndef NRF_CSN_PIN
 #define NRF_CSN_PIN 7
+#endif
 
 // Set to 1 to print the gold-vector self-test on boot (no hardware needed).
 #define PACKET_SELFTEST 1

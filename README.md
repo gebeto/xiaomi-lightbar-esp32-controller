@@ -27,8 +27,26 @@ The firmware exposes a tiny WiFi HTTP endpoint: `GET /on_off` toggles the bar.
 > module's VCC/GND, or use an adapter board with a regulator, to avoid brown-outs. Power the module
 > from **3.3 V**, not 5 V.
 
+### Wiring (nRF24L01 → WEMOS LOLIN32 Lite rev1)
+
+The LOLIN32 Lite is a classic **ESP32** (not a C3). GPIO6–11 are reserved for the on-chip SPI
+flash and must not be used, so this board uses different pins (set via `build_flags` in the
+`lolin32-lite` env):
+
+| nRF24L01 | LOLIN32 Lite |
+|----------|--------------|
+| VCC      | 3V3          |
+| GND      | GND          |
+| CE       | GPIO17       |
+| CSN      | GPIO5        |
+| SCK      | GPIO18       |
+| MOSI     | GPIO23       |
+| MISO     | GPIO19       |
+| IRQ      | (not connected) |
+
 Pins can be changed: control pins (`NRF_CE_PIN`, `NRF_CSN_PIN`) in `src/main.cpp`; SPI bus pins
-(`NRF_SCK_PIN`, `NRF_MISO_PIN`, `NRF_MOSI_PIN`) at the top of `src/Lightbar.cpp`.
+(`NRF_SCK_PIN`, `NRF_MISO_PIN`, `NRF_MOSI_PIN`) at the top of `src/Lightbar.cpp` — or override any
+of them per board in `platformio.ini` `build_flags`.
 
 ## Configure
 
@@ -43,9 +61,16 @@ Edit the defines at the top of `src/main.cpp`:
 
 ```sh
 cd esp32c3
-pio run                 # compile
+pio run                 # compile (default env: esp32-c3-devkitm-1)
 pio run -t upload       # flash over USB
 pio device monitor      # serial console @ 115200
+```
+
+For the WEMOS LOLIN32 Lite, select its environment:
+
+```sh
+pio run -e lolin32-lite               # compile
+pio run -e lolin32-lite -t upload     # flash over USB
 ```
 
 On boot the serial console prints a self-test packet, whether the nRF24 chip is connected, and the
